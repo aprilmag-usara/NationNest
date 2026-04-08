@@ -1,22 +1,39 @@
 <script setup>
-const props = defineProps(['modelValue'])
-const emit = defineEmits(['update:modelValue'])
+const props = defineProps({
+  modelValue: String,
+  region: String
+})
+const emit = defineEmits(['update:modelValue', 'update:region'])
+
+const regions = ['Africa', 'Americas', 'Asia', 'Europe', 'Oceania', 'Antarctic']
 
 const updateValue = (event) => {
-  emit('update:modelValue', event.target.value)
+  emit('update:modelValue', event.target.value)}
+
+const updateRegion = (event) => {
+  emit('update:region', event.target.value)
 }
 </script>
 
-
 <template>
   <div class="search-container">
-    <input 
-      :value="modelValue"
-      @input="updateValue"
-      type="text" 
-      class="search-box" 
-      placeholder="Search for a nation, capital, or group..."
-    />
+    <div style="display: flex; gap: 10px; width: 100%; max-width: 700px;">
+      <input 
+        :value="modelValue"
+        @input="updateValue"
+        type="text" 
+        class="search-box" 
+        placeholder="🔍︎ Search for a nation, capital, or group..."
+      />
+
+      <select 
+        :value="region"
+        @change="updateRegion"
+      >
+        <option value="">All Continents</option>
+        <option v-for="reg in regions" :key="reg" :value="reg">{{ reg }}</option>
+      </select>
+    </div>
   </div>
 </template>
 
@@ -50,7 +67,7 @@ const updateValue = (event) => {
 
 .search-box:focus {
   background: rgba(255, 255, 255, 0.25);
-  transform: scale(1.05);
+  transform: scale(1.02);
   box-shadow: 0 12px 40px rgba(0, 0, 0, 0.3);
   border-color: rgba(255, 255, 255, 0.5);
 }

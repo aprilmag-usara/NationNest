@@ -7,6 +7,7 @@ import ErrorMessage from './components/ErrorMessage.vue'
 
 const countries = ref([])
 const searchQuery = ref('')
+const selectedRegion = ref('')
 const loading = ref(true)
 const error = ref(null)
 
@@ -35,18 +36,24 @@ onMounted(() => {
   fetchCountries()
 })
 
-const filteredCountries = computed(() => {
-  const query = (searchQuery.value || '').trim().toLowerCase()
-  
-  if (!query) return countries.value
+const filteredCountries = computed(() => {  const query = (searchQuery.value || '').trim().toLowerCase()
   
   return countries.value.filter(country => {
     const name = (country.name?.common || '').toLowerCase()
-    return name.startsWith(query)
-  })
-})
-</script>
+    const capital = (country.capital?.[0] || '').toLowerCase()
+    
+    const matchesSearch =
+      !query ||
+      name.includes(query) ||
+      capital.includes(query)
 
+    const matchesRegion =
+      !selectedRegion.value ||
+      country.region === selectedRegion.value
+
+    return matchesSearch && matchesRegion
+  })
+})</script>
 
 <template>
   <div class="app-wrapper">
@@ -57,7 +64,10 @@ const filteredCountries = computed(() => {
       </header>
 
       <main>
-        <SearchCountry v-model="searchQuery" />
+        <SearchCountry 
+          v-model="searchQuery"
+          v-model:region="selectedRegion"
+        />
 
         <LoadingSpinner v-if="loading" />
 
@@ -85,6 +95,7 @@ const filteredCountries = computed(() => {
     </div>
   </div>
 </template>
+
 
 <style>
 :root {
